@@ -5,8 +5,14 @@ import 'package:secure_connect/constants/app_strings.dart';
 class CommonBackground extends StatelessWidget {
   final String headerText;
   final Widget child;
+  final bool isLogout;
+  final void Function()? logoutOnTap;
   const CommonBackground(
-      {required this.child, required this.headerText, super.key});
+      {required this.child,
+      required this.headerText,
+      required this.isLogout,
+      this.logoutOnTap,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +64,23 @@ class CommonBackground extends StatelessWidget {
               width: MediaQuery.of(context).size.width * 0.38,
               decoration: const BoxDecoration(
                   color: AppColors.whiteLight, shape: BoxShape.circle),
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.08,
+                  ),
+                  child: isLogout
+                      ? InkWell(
+                          onTap: logoutOnTap,
+                          child: const Text(
+                            AppStrings.logout,
+                            style: TextStyle(
+                                fontSize: 20, color: AppColors.textColor),
+                          ),
+                        )
+                      : Container(),
+                ),
+              ),
             ),
           )
         ],

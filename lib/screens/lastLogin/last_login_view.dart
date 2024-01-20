@@ -8,6 +8,7 @@ class LastLoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CommonBackground(
+      isLogout: true,
       headerText: AppStrings.lastLogin,
       child: Container(),
     );
