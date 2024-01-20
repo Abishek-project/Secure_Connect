@@ -3,8 +3,10 @@ import 'package:secure_connect/constants/app_colors.dart';
 import 'package:secure_connect/constants/app_strings.dart';
 
 class CommonBackground extends StatelessWidget {
+  final String headerText;
   final Widget child;
-  const CommonBackground({required this.child, super.key});
+  const CommonBackground(
+      {required this.child, required this.headerText, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +41,10 @@ class CommonBackground extends StatelessWidget {
                   color: Colors.blue.shade400,
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    AppStrings.login,
-                    style: TextStyle(fontSize: 24, color: Colors.white),
+                    headerText,
+                    style: const TextStyle(fontSize: 24, color: Colors.white),
                   ),
                 ),
               ),

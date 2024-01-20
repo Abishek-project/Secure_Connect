@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:secure_connect/components/background_template.dart';
 import 'package:secure_connect/constants/app_colors.dart';
 import 'package:secure_connect/constants/app_strings.dart';
+import 'package:secure_connect/screens/pluginView/plugin_view.dart';
+import 'package:secure_connect/screens/pluginView/plugin_view_bindings.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_textfield.dart';
 
@@ -10,13 +13,14 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CommonBackground(
+    return CommonBackground(
+      headerText: AppStrings.login,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
+            const Row(
               children: [
                 Text(
                   AppStrings.phoneNumber,
@@ -24,14 +28,14 @@ class LoginScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            CustomTextField(),
-            SizedBox(
+            const CustomTextField(),
+            const SizedBox(
               height: 25,
             ),
-            Row(
+            const Row(
               children: [
                 Text(
                   AppStrings.otp,
@@ -39,11 +43,14 @@ class LoginScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            CustomTextField(),
+            const CustomTextField(),
             CustomButton(
+              onTap: () {
+                Get.to(const PluginView(), binding: PluginBindings());
+              },
               buttonText: AppStrings.login,
             )
           ],
