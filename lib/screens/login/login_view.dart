@@ -48,17 +48,17 @@ class LoginView extends GetView<LoginViewController> {
                   textInputAction: TextInputAction.done,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter mobile number';
+                      return AppStrings.enterYourNumber;
                     } else if (!controller.regex.hasMatch(value)) {
-                      return 'Please enter valid mobile number';
+                      return AppStrings.enterValidNumber;
                     }
                     return null;
                   },
                   onFieldSubmitted: (value) {
                     if (value.isEmpty) {
                       Get.snackbar(
-                        'Empty Field',
-                        'Please enter mobile number',
+                        AppStrings.emptyField,
+                        AppStrings.enterYourNumber,
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
@@ -69,8 +69,8 @@ class LoginView extends GetView<LoginViewController> {
                       );
                     } else if (!controller.regex.hasMatch(value)) {
                       Get.snackbar(
-                        'Invalid Mobile Number',
-                        'Please enter valid mobile number',
+                        AppStrings.invalidNumber,
+                        AppStrings.enterValidNumber,
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
@@ -107,7 +107,7 @@ class LoginView extends GetView<LoginViewController> {
                   textInputAction: TextInputAction.done,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Enter OTP';
+                      return AppStrings.enterOtp;
                     }
 
                     return null;

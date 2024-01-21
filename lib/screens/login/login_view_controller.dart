@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:secure_connect/components/common_functions.dart';
+import 'package:secure_connect/constants/app_colors.dart';
 import 'package:secure_connect/constants/app_paths.dart';
+import 'package:secure_connect/constants/app_strings.dart';
 import 'package:secure_connect/screens/login/login_view_variables.dart';
 
 class LoginViewController extends GetxController with LoginVariables {
@@ -22,27 +25,18 @@ class LoginViewController extends GetxController with LoginVariables {
     if (isBiometricAvailable) {
       bool isAuthenticate = await authenticate();
       if (isAuthenticate) {
-        Get.dialog(
-          const Center(
-            child: CircularProgressIndicator(),
-          ),
-          barrierDismissible: false,
-        );
+        CommonWidgetFunctions.showOverlayLoader();
         await Future.delayed(const Duration(seconds: 1));
         Get.back();
         Get.toNamed(AppPaths.plugin);
       }
     } else {
-      Get.snackbar(
-        'No Biometric',
-        'Biometric authentication unavailable.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackStyle: SnackStyle.FLOATING,
-        duration: const Duration(seconds: 1),
-        margin: const EdgeInsets.only(bottom: 30, right: 15, left: 15),
-      );
+      CommonWidgetFunctions.showAlertSnackbar(
+          AppStrings.noBiometric,
+          AppStrings.biometricUnAvailable,
+          AppColors.redColor,
+          AppColors.textColor,
+          3);
       Get.toNamed(AppPaths.plugin);
     }
   }
@@ -61,7 +55,7 @@ class LoginViewController extends GetxController with LoginVariables {
   Future<bool> authenticate() async {
     try {
       return await _auth.authenticate(
-          localizedReason: 'Authenticate',
+          localizedReason: AppStrings.authenticate,
           options: const AuthenticationOptions(
               stickyAuth: true, biometricOnly: true, useErrorDialogs: true));
     } catch (e) {
@@ -86,16 +80,8 @@ class LoginViewController extends GetxController with LoginVariables {
       );
     } catch (e) {
       Get.back();
-      Get.snackbar(
-        'Error',
-        'Something went wrong. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackStyle: SnackStyle.FLOATING,
-        duration: const Duration(seconds: 3),
-        margin: const EdgeInsets.only(bottom: 30, right: 15, left: 15),
-      );
+      CommonWidgetFunctions.showAlertSnackbar(AppStrings.error,
+          AppStrings.wentWrong, AppColors.redColor, AppColors.textColor, 3);
     }
   }
 
@@ -103,72 +89,34 @@ class LoginViewController extends GetxController with LoginVariables {
     try {
       Get.back();
       await FirebaseAuth.instance.signInWithCredential(credential);
-      Get.snackbar(
-        'Success',
-        'Phone number verification successful!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        snackStyle: SnackStyle.FLOATING,
-        duration: const Duration(seconds: 3),
-        margin: const EdgeInsets.only(bottom: 30, right: 15, left: 15),
-      );
+      CommonWidgetFunctions.showAlertSnackbar(
+          AppStrings.success,
+          AppStrings.verificationSuccessful,
+          AppColors.greenColor,
+          AppColors.textColor,
+          3);
     } catch (e) {
       Get.back();
-      Get.snackbar(
-        'Error',
-        'Something went wrong. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackStyle: SnackStyle.FLOATING,
-        duration: const Duration(seconds: 3),
-        margin: const EdgeInsets.only(bottom: 30, right: 15, left: 15),
-      );
+      CommonWidgetFunctions.showAlertSnackbar(AppStrings.error,
+          AppStrings.wentWrong, AppColors.redColor, AppColors.textColor, 3);
     }
   }
 
   void verificationFailed(FirebaseAuthException e) {
     Get.back();
-    Get.snackbar(
-      'Error',
-      'Phone number verification failed. ${e.message}',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      snackStyle: SnackStyle.FLOATING,
-      duration: const Duration(seconds: 3),
-      margin: const EdgeInsets.only(bottom: 30, right: 15, left: 15),
-    );
+    CommonWidgetFunctions.showAlertSnackbar(
+        AppStrings.error,
+        '${AppStrings.verificationFailed} ${e.message}',
+        AppColors.redColor,
+        AppColors.textColor,
+        3);
   }
 
   void codeSent(String verificationId, int? resendToken) {
     Get.back();
     this.verificationId = verificationId;
-    Get.snackbar(
-      'Info',
-      'OTP has been sent to your phone.',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-      snackStyle: SnackStyle.FLOATING,
-      duration: const Duration(seconds: 3),
-      margin: const EdgeInsets.only(bottom: 30, right: 15, left: 15),
-    );
-  }
-
-  void codeAutoRetrievalTimeout(String verificationId) {
-    // Get.back();
-    // Get.snackbar(
-    //   'Info',
-    //   'Automatic OTP retrieval timed out. Please enter the OTP manually.',
-    //   snackPosition: SnackPosition.BOTTOM,
-    //   backgroundColor: Colors.blue,
-    //   colorText: Colors.white,
-    //   snackStyle: SnackStyle.FLOATING,
-    //   duration: const Duration(seconds: 3),
-    //   margin: const EdgeInsets.only(bottom: 30, right: 15, left: 15),
-    // );
+    CommonWidgetFunctions.showAlertSnackbar(AppStrings.info,
+        AppStrings.otpSented, AppColors.blueDarkColor, AppColors.textColor, 3);
   }
 
   Future<void> signInWithPhoneNumber(String otp) async {
@@ -191,34 +139,25 @@ class LoginViewController extends GetxController with LoginVariables {
       Get.toNamed(AppPaths.plugin);
     } catch (e) {
       Get.back();
-      String errorMessage = 'Something went wrong';
+      String errorMessage = AppStrings.wentWrong;
       if (e is FirebaseAuthException) {
         switch (e.code) {
           case 'invalid-verification-code':
-            errorMessage = 'Invalid OTP. Please enter the correct code.';
+            errorMessage = AppStrings.invalidOTP;
             break;
           case 'invalid-verification-id':
-            errorMessage = 'Invalid verification ID. Please try again.';
+            errorMessage = AppStrings.invalidVerificationId;
             break;
           case 'session-expired':
-            errorMessage =
-                'Verification session has expired. Please try again.';
+            errorMessage = AppStrings.sessionExpired;
             break;
           default:
-            errorMessage = 'Authentication failed. Please try again.';
+            errorMessage = AppStrings.authenticationFailed;
             break;
         }
       }
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackStyle: SnackStyle.FLOATING,
-        duration: const Duration(seconds: 3),
-        margin: const EdgeInsets.only(bottom: 30, right: 15, left: 15),
-      );
+      CommonWidgetFunctions.showAlertSnackbar(AppStrings.error, errorMessage,
+          AppColors.redColor, AppColors.textColor, 3);
     }
   }
 }
