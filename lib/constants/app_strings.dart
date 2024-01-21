@@ -32,4 +32,10 @@ class AppStrings {
   static const String verificationFailed = 'Phone number verification failed';
   static const String info = 'Info';
   static const String otpSented = 'OTP has been sent to your phone';
+  static const String generatedString = 'Generated String';
+  static const String noPreviousLogins = 'No previous logins';
+  static const String today = 'TODAY';
+  static const String yesterday = 'Yesterday';
+  static const String other = 'Other';
+  static const String noDataAvailable = 'No data available !';
 }

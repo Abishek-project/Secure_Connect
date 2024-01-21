@@ -1,28 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:secure_connect/screens/lastLogin/last_login_view_variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LastLoginController extends GetxController with LastLoginVariables {
-  TabController? tabController;
   init() async {
     fetchData();
   }
 
-  @override
-  void onInit() {
-    // tabController = TabController(length: 3, vsync: ScrollableState());
-    // TODO: implement onInit
-    super.onInit();
-  }
-
-  @override
-  void dispose() {
-    tabController!.dispose();
-    super.dispose();
-  }
-
+  /// The `fetchData` function retrieves login events from Firestore for a specific user, sorts them by
+  /// login time, and categorizes them into today's data, yesterday's data, and other data.
+  ///
+  /// Returns:
+  ///   a `Future<void>`.
   Future<void> fetchData() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -66,6 +56,13 @@ class LastLoginController extends GetxController with LastLoginVariables {
     }
   }
 
+  /// The function `_isToday` checks if a given timestamp is for today's date.
+  ///
+  /// Args:
+  ///   timestamp (Timestamp): A Timestamp object representing a specific date and time.
+  ///
+  /// Returns:
+  ///   a boolean value.
   bool _isToday(Timestamp timestamp) {
     DateTime dateTime = timestamp.toDate();
     DateTime today = DateTime.now();
@@ -74,24 +71,18 @@ class LastLoginController extends GetxController with LastLoginVariables {
         dateTime.day == today.day;
   }
 
+  /// The function `_isYesterday` checks if a given timestamp is from yesterday.
+  ///
+  /// Args:
+  ///   timestamp (Timestamp): A Timestamp object representing a specific point in time.
+  ///
+  /// Returns:
+  ///   a boolean value.
   bool _isYesterday(Timestamp timestamp) {
     DateTime dateTime = timestamp.toDate();
-    DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
+    DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
     return dateTime.year == yesterday.year &&
         dateTime.month == yesterday.month &&
         dateTime.day == yesterday.day;
   }
-
-  // String _generateRandomString() {
-  //   const String chars =
-  //       'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  //   const int length = 6;
-  //   Random random = Random();
-  //   return String.fromCharCodes(
-  //     Iterable.generate(
-  //       length,
-  //       (_) => chars.codeUnitAt(random.nextInt(chars.length)),
-  //     ),
-  //   );
-  // }
 }

@@ -28,7 +28,7 @@ class CustomTextField extends StatelessWidget {
       textInputAction: textInputAction,
       keyboardType: keyboardType,
       controller: controller,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: AppColors.textColor),
       decoration: InputDecoration(
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

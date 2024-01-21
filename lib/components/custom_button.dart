@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:secure_connect/constants/app_typography.dart';
 import '../constants/app_colors.dart';
 
 class CustomButton extends StatelessWidget {
@@ -16,21 +16,16 @@ class CustomButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        decoration: const BoxDecoration(
-            color: Color(0xFF333333),
-            borderRadius: BorderRadius.all(
+        decoration: BoxDecoration(
+            color: AppColors.grey01Color,
+            borderRadius: const BorderRadius.all(
               Radius.circular(12),
             )),
         height: MediaQuery.of(context).size.height * 0.07,
         child: Center(
-          child: Text(
-            buttonText,
-            style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textColor),
-          ),
-        ),
+            child: Text(buttonText,
+                style: AppTypography.appMediumBoldText
+                    .copyWith(color: AppColors.textColor))),
       ),
     );
   }

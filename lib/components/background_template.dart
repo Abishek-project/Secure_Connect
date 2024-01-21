@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:secure_connect/constants/app_colors.dart';
 import 'package:secure_connect/constants/app_strings.dart';
+import 'package:secure_connect/constants/app_typography.dart';
 
 class CommonBackground extends StatelessWidget {
   final String headerText;
   final Widget child;
   final bool isLogout;
+  final bool isBackArrow;
   final void Function()? logoutOnTap;
   const CommonBackground(
       {required this.child,
       required this.headerText,
       required this.isLogout,
+      required this.isBackArrow,
       this.logoutOnTap,
       super.key});
 
@@ -21,6 +25,22 @@ class CommonBackground extends StatelessWidget {
       backgroundColor: const Color(0XFF2d2c5c),
       body: Stack(
         children: [
+          isBackArrow
+              ? Padding(
+                  padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.height * 0.01,
+                    top: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                  child: IconButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: AppColors.textColor,
+                      )),
+                )
+              : Container(),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -48,10 +68,9 @@ class CommonBackground extends StatelessWidget {
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                 ),
                 child: Center(
-                  child: Text(
-                    headerText,
-                    style: const TextStyle(fontSize: 24, color: Colors.white),
-                  ),
+                  child: Text(headerText,
+                      style: AppTypography.appMediumText02
+                          .copyWith(color: Colors.white)),
                 ),
               ),
             ),
@@ -72,11 +91,9 @@ class CommonBackground extends StatelessWidget {
                   child: isLogout
                       ? InkWell(
                           onTap: logoutOnTap,
-                          child: const Text(
-                            AppStrings.logout,
-                            style: TextStyle(
-                                fontSize: 20, color: AppColors.textColor),
-                          ),
+                          child: Text(AppStrings.logout,
+                              style: AppTypography.appMediumText
+                                  .copyWith(color: AppColors.textColor)),
                         )
                       : Container(),
                 ),

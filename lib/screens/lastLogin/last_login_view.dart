@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -7,6 +6,7 @@ import 'package:secure_connect/components/background_template.dart';
 import 'package:secure_connect/components/common_functions.dart';
 import 'package:secure_connect/constants/app_colors.dart';
 import 'package:secure_connect/constants/app_strings.dart';
+import 'package:secure_connect/constants/app_typography.dart';
 import 'package:secure_connect/screens/lastLogin/last_login_view_controller.dart';
 
 class LastLoginView extends GetView<LastLoginController> {
@@ -20,6 +20,7 @@ class LastLoginView extends GetView<LastLoginController> {
       logoutOnTap: () => CommonWidgetFunctions.logout(),
       isLogout: true,
       headerText: AppStrings.lastLogin,
+      isBackArrow: true,
       child: DefaultTabController(
         length: 3,
         child: Column(
@@ -29,51 +30,64 @@ class LastLoginView extends GetView<LastLoginController> {
             ),
             Padding(
               padding: EdgeInsets.zero,
-              child: TabBar(
-                // isScrollable: true,
-                // tabAlignment: TabAlignment.start,
-                onTap: (value) {
-                  controller.fetchData();
-                },
-                indicatorWeight: 4,
-                indicatorColor: AppColors.textColor,
-                // padding: EdgeInsets.zero,
-                // labelPadding: EdgeInsets.zero,
-                indicatorSize: TabBarIndicatorSize.label,
-                // indicatorPadding: EdgeInsets.zero,
-                tabs: const [
-                  Tab(
-                    text: 'TODAY',
-                  ),
-                  Tab(text: 'Yesterday'),
-                  Tab(text: 'Other'),
-                ],
-              ),
+              child: tabBarHeader(context),
             ),
             Obx(() => Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 34),
-                    child: TabBarView(
-                      children: [
-                        MyView(
-                          data: controller.todayData,
-                          loading: controller.isLoading.value,
-                        ),
-                        MyView(
-                          data: controller.yesterdayData,
-                          loading: controller.isLoading.value,
-                        ),
-                        MyView(
-                          data: controller.otherData,
-                          loading: controller.isLoading.value,
-                        ),
-                      ],
-                    ),
+                    child: tabView(),
                   ),
                 )),
           ],
         ),
       ),
+    );
+  }
+
+  TabBar tabBarHeader(BuildContext context) {
+    return TabBar(
+      isScrollable: true,
+      tabAlignment: TabAlignment.start,
+      onTap: (value) {
+        controller.fetchData();
+      },
+      indicatorWeight: 4,
+      indicatorColor: AppColors.textColor,
+      padding: EdgeInsets.zero,
+      labelPadding:
+          EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.15),
+      indicatorSize: TabBarIndicatorSize.label,
+      indicatorPadding: EdgeInsets.zero,
+      tabs: const [
+        Tab(
+          text: AppStrings.today,
+        ),
+        Tab(
+          text: AppStrings.yesterday,
+        ),
+        Tab(
+          text: AppStrings.other,
+        ),
+      ],
+    );
+  }
+
+  TabBarView tabView() {
+    return TabBarView(
+      children: [
+        MyView(
+          data: controller.todayData,
+          loading: controller.isLoading.value,
+        ),
+        MyView(
+          data: controller.yesterdayData,
+          loading: controller.isLoading.value,
+        ),
+        MyView(
+          data: controller.otherData,
+          loading: controller.isLoading.value,
+        ),
+      ],
     );
   }
 }
@@ -89,11 +103,10 @@ class MyView extends StatelessWidget {
     if (loading == true) {
       return const Center(child: CircularProgressIndicator());
     } else if (data.isEmpty) {
-      return const Center(
-          child: Text(
-        'No data available !',
-        style: TextStyle(color: AppColors.textColor, fontSize: 20),
-      ));
+      return Center(
+          child: Text(AppStrings.noDataAvailable,
+              style: AppTypography.appMediumText
+                  .copyWith(color: AppColors.textColor)));
     } else {
       return _buildTabView(data);
     }
@@ -109,14 +122,13 @@ Widget _buildTabView(RxList data) {
         clipBehavior: Clip.none,
         children: [
           Container(
-            margin: const EdgeInsets.only(bottom: 26),
+            margin: const EdgeInsets.only(bottom: 30),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-                color: Colors.grey.shade900,
+                color: AppColors.greyDarkColor,
                 borderRadius: const BorderRadius.all(Radius.circular(12))),
             child: Row(
               children: [
-                // Left side - Time, IP, Address
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +144,7 @@ Widget _buildTabView(RxList data) {
                         height: 2,
                       ),
                       Text(
-                        '${item['ipAddress']}',
+                        'ip: ${item['ipAddress']}',
                         style: const TextStyle(color: AppColors.textColor),
                       ),
                       const SizedBox(
@@ -164,8 +176,7 @@ Widget _buildTabView(RxList data) {
                       ),
                     ),
                     child: QrImageView(
-                      data: item['qrCodeImage'] ??
-                          '', // Replace with your actual key
+                      data: item['qrCodeImage'] ?? '',
                       version: QrVersions.auto,
                       size: 90.0,
                     ),

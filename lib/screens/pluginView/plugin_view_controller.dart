@@ -21,6 +21,11 @@ class PluginController extends GetxController with PluginVariables {
     );
   }
 
+  /// The function retrieves the last login time of a user from Firestore and formats it to display the
+  /// day name and time.
+  ///
+  /// Returns:
+  ///   The method `getLastLogin()` returns a `Future<String>`.
   Future<String> getLastLogin() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -71,6 +76,14 @@ class PluginController extends GetxController with PluginVariables {
     return '$hour:$minute $period';
   }
 
+  /// The function `_formatDayName` takes a `DateTime` object as input and returns the corresponding day
+  /// name as a string.
+  ///
+  /// Args:
+  ///   dateTime (DateTime): A DateTime object representing a specific date and time.
+  ///
+  /// Returns:
+  ///   the name of the day of the week corresponding to the given DateTime object.
   String _formatDayName(DateTime dateTime) {
     return dateTime.weekday == DateTime.monday
         ? 'Monday'
@@ -87,6 +100,11 @@ class PluginController extends GetxController with PluginVariables {
                             : 'Sunday';
   }
 
+  /// The function updates the QR code image value in the most recent login document for a user in
+  /// Firestore.
+  ///
+  /// Returns:
+  ///   a `Future<void>`.
   Future<void> updateQrCodeImage() async {
     CommonWidgetFunctions.showOverlayLoader();
     try {
