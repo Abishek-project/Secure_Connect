@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -13,57 +14,7 @@ import 'package:secure_connect/screens/login/login_view_variables.dart';
 
 class LoginViewController extends GetxController with LoginVariables {
   final _auth = LocalAuthentication();
-
-  void getLocation() async {
-    bool serviceEnabled;
-
-    LocationPermission permission;
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      await Geolocator.openLocationSettings();
-      permission = await Geolocator.requestPermission();
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again.
-        return;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return;
-    }
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-
-    try {
-      Position position = await Geolocator.getCurrentPosition();
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
-
-      Placemark place = placemarks[0];
-
-      address.value = '${place.locality},${place.country}';
-      gettingIp();
-    } catch (e) {
-      return;
-    }
-  }
-
-  void gettingIp() async {
-    final info = NetworkInfo();
-    var hostAddress = await info.getWifiIP();
-    if (hostAddress != null) {
-      ip.value = hostAddress;
-    }
-  }
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   init() async {
     var response = await isUserExists();
@@ -97,6 +48,9 @@ class LoginViewController extends GetxController with LoginVariables {
 
   isUserExists() {
     User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      firebaseUser = currentUser;
+    }
     return currentUser;
   }
 
@@ -180,13 +134,21 @@ class LoginViewController extends GetxController with LoginVariables {
       ),
       barrierDismissible: false,
     );
-
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
         smsCode: otp,
       );
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential authResult =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Access the signed-in user
+      User? user = authResult.user;
+      // Access the UID of the user
+      String uid = user?.uid ?? "";
+      await getLocation();
+      await gettingIp();
+      await sentDataToTheFirestore(uid);
       phoneNumberController.clear();
       otpController.clear();
       Get.back();
@@ -212,6 +174,78 @@ class LoginViewController extends GetxController with LoginVariables {
       }
       CommonWidgetFunctions.showAlertSnackbar(AppStrings.error, errorMessage,
           AppColors.redColor, AppColors.textColor, 3);
+    }
+  }
+
+  Future<void> sentDataToTheFirestore(String userUid) async {
+    try {
+      // Generate a unique identifier for each login event using a timestamp
+      String loginEventId = '${DateTime.now().millisecondsSinceEpoch}';
+
+      // Save user details to a new document in the 'loginEvents' subcollection
+      await firestore
+          .collection('users')
+          .doc(userUid)
+          .collection('loginEvents')
+          .doc(loginEventId)
+          .set({
+        'ipAddress': ip.value,
+        'location': address.value,
+        'loginTime': DateTime.now(),
+      });
+    } catch (e) {
+      // Handle the exception
+      return;
+    }
+  }
+
+  getLocation() async {
+    bool serviceEnabled;
+
+    LocationPermission permission;
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      await Geolocator.openLocationSettings();
+      permission = await Geolocator.requestPermission();
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again.
+        return;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return;
+    }
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+
+    try {
+      Position position = await Geolocator.getCurrentPosition();
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      Placemark place = placemarks[0];
+
+      address.value = '${place.locality},${place.country}';
+    } catch (e) {
+      return;
+    }
+  }
+
+  gettingIp() async {
+    final info = NetworkInfo();
+    var hostAddress = await info.getWifiIP();
+    if (hostAddress != null) {
+      ip.value = hostAddress;
     }
   }
 }

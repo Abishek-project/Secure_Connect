@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/get_rx.dart';
 
@@ -9,4 +10,5 @@ mixin LoginVariables {
   RegExp regex = RegExp(r'^[6-9]\d{9}$');
   RxString address = ''.obs;
   RxString ip = ''.obs;
+  User? firebaseUser;
 }
