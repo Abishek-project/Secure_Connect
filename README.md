@@ -1,16 +1,5 @@
-# secure_connect
+# Secure Connect
 
-A new Flutter project.
+The "Secure Connect" Flutter app aims to deliver a secure login experience through phone number authentication, utilizing Firebase Authentication. Post a successful login, the app captures and stores user details, including IP address and location. It generates a unique alphanumeric string with a QR code in the plugin view. The app also offers a history page for users to review their past logins, and it enhances security by prompting biometric authentication upon app relaunch.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![App UI](assets/SecureConnectLogo.png)
