@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:secure_connect/components/common_functions.dart';
 import 'package:secure_connect/constants/app_colors.dart';
 import 'package:secure_connect/constants/app_paths.dart';
@@ -10,6 +13,57 @@ import 'package:secure_connect/screens/login/login_view_variables.dart';
 
 class LoginViewController extends GetxController with LoginVariables {
   final _auth = LocalAuthentication();
+
+  void getLocation() async {
+    bool serviceEnabled;
+
+    LocationPermission permission;
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      await Geolocator.openLocationSettings();
+      permission = await Geolocator.requestPermission();
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again.
+        return;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return;
+    }
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+
+    try {
+      Position position = await Geolocator.getCurrentPosition();
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      Placemark place = placemarks[0];
+
+      address.value = '${place.locality},${place.country}';
+      gettingIp();
+    } catch (e) {
+      return;
+    }
+  }
+
+  void gettingIp() async {
+    final info = NetworkInfo();
+    var hostAddress = await info.getWifiIP();
+    if (hostAddress != null) {
+      ip.value = hostAddress;
+    }
+  }
 
   init() async {
     var response = await isUserExists();

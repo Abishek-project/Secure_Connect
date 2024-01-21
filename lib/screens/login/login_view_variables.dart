@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_rx/get_rx.dart';
 
 mixin LoginVariables {
   String verificationId = "";
@@ -6,4 +7,6 @@ mixin LoginVariables {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
   RegExp regex = RegExp(r'^[6-9]\d{9}$');
+  RxString address = ''.obs;
+  RxString ip = ''.obs;
 }
