@@ -5,6 +5,7 @@ import 'package:secure_connect/components/background_template.dart';
 import 'package:secure_connect/components/common_functions.dart';
 import 'package:secure_connect/components/custom_button.dart';
 import 'package:secure_connect/constants/app_colors.dart';
+import 'package:secure_connect/constants/app_paths.dart';
 import 'package:secure_connect/constants/app_strings.dart';
 import 'package:secure_connect/screens/pluginView/plugin_view_controller.dart';
 
@@ -60,22 +61,27 @@ class PluginView extends GetView<PluginController> {
                               return Text("Error: ${snapshot.error}");
                             } else {
                               // If the Future is complete, display the result
-                              return Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.07,
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(12)),
-                                  border: Border.all(
-                                      width: 1, color: AppColors.textColor),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    snapshot.data ??
-                                        "No previous logins", // Show the result
-                                    style: const TextStyle(
-                                        color: AppColors.textColor,
-                                        fontSize: 18),
+                              return InkWell(
+                                onTap: () {
+                                  Get.toNamed(AppPaths.lastLogin);
+                                },
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.07,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(12)),
+                                    border: Border.all(
+                                        width: 1, color: AppColors.textColor),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      snapshot.data ??
+                                          "No previous logins", // Show the result
+                                      style: const TextStyle(
+                                          color: AppColors.textColor,
+                                          fontSize: 18),
+                                    ),
                                   ),
                                 ),
                               );
