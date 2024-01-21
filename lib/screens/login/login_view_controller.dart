@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import 'package:secure_connect/constants/app_colors.dart';
 import 'package:secure_connect/constants/app_paths.dart';
 import 'package:secure_connect/constants/app_strings.dart';
 import 'package:secure_connect/screens/login/login_view_variables.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginViewController extends GetxController with LoginVariables {
   final _auth = LocalAuthentication();
@@ -146,6 +149,8 @@ class LoginViewController extends GetxController with LoginVariables {
       User? user = authResult.user;
       // Access the UID of the user
       String uid = user?.uid ?? "";
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("Userid", uid);
       await getLocation();
       await gettingIp();
       await sentDataToTheFirestore(uid);

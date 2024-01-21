@@ -113,14 +113,18 @@ class LoginView extends GetView<LoginViewController> {
                     return null;
                   },
                 ),
-                CustomButton(
-                  onTap: () async {
-                    if (controller.formKey.currentState!.validate()) {
-                      await controller.signInWithPhoneNumber(
-                          controller.otpController.text.trim());
-                    }
-                  },
-                  buttonText: AppStrings.login,
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.08),
+                  child: CustomButton(
+                    onTap: () async {
+                      if (controller.formKey.currentState!.validate()) {
+                        await controller.signInWithPhoneNumber(
+                            controller.otpController.text.trim());
+                      }
+                    },
+                    buttonText: AppStrings.login,
+                  ),
                 )
               ],
             ),
